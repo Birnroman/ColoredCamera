@@ -1,5 +1,7 @@
 import SwiftUI
 import AVFoundation
+import PhotosUI
+
 
 struct CameraView: View {
     @StateObject private var cameraModel = CameraModel()
@@ -15,16 +17,34 @@ struct CameraView: View {
                 )
                 .padding()
             
-            Button(action: {
-                cameraModel.capturePhoto()
-            }) {
-                Text("Сделать фото")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .frame(width: 200, height: 50)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+            HStack(spacing: 20) {
+                Button(action: {
+                    cameraModel.capturePhoto()
+                }) {
+                    Text("Сделать фото")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .frame(width: 160, height: 50)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                
+                Button(action: {
+                    if cameraModel.isRecording {
+                        cameraModel.stopRecording()
+                    } else {
+                        cameraModel.startRecording()
+                    }
+                }) {
+                    Text(cameraModel.isRecording ? "Остановить" : "Видео")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .frame(width: 160, height: 50)
+                        .background(cameraModel.isRecording ? Color.red : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
             }
         }
         .onAppear {
@@ -35,27 +55,45 @@ struct CameraView: View {
 
 class CameraModel: NSObject, ObservableObject {
     @Published var session = AVCaptureSession()
+    @Published var isRecording = false
     
-    private let output = AVCapturePhotoOutput()
+    private let photoOutput = AVCapturePhotoOutput()
+    private let movieOutput = AVCaptureMovieFileOutput()
     private let queue = DispatchQueue(label: "CameraQueue")
     
     func configure() {
         queue.async {
             self.session.beginConfiguration()
             
+            // Настройка камеры
             guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else { return }
+            guard let audio = AVCaptureDevice.default(for: .audio) else { return }
             
             do {
-                let input = try AVCaptureDeviceInput(device: camera)
-                if self.session.canAddInput(input) {
-                    self.session.addInput(input)
+                // Добавляем видео вход
+                let videoInput = try AVCaptureDeviceInput(device: camera)
+                if self.session.canAddInput(videoInput) {
+                    self.session.addInput(videoInput)
                 }
+                
+                // Добавляем аудио вход
+                let audioInput = try AVCaptureDeviceInput(device: audio)
+                if self.session.canAddInput(audioInput) {
+                    self.session.addInput(audioInput)
+                }
+                
+                // Добавляем фото выход
+                if self.session.canAddOutput(self.photoOutput) {
+                    self.session.addOutput(self.photoOutput)
+                }
+                
+                // Добавляем видео выход
+                if self.session.canAddOutput(self.movieOutput) {
+                    self.session.addOutput(self.movieOutput)
+                }
+                
             } catch {
                 print("Ошибка настройки камеры: \(error)")
-            }
-            
-            if self.session.canAddOutput(self.output) {
-                self.session.addOutput(self.output)
             }
             
             self.session.commitConfiguration()
@@ -68,7 +106,25 @@ class CameraModel: NSObject, ObservableObject {
     
     func capturePhoto() {
         let settings = AVCapturePhotoSettings()
-        self.output.capturePhoto(with: settings, delegate: self)
+        self.photoOutput.capturePhoto(with: settings, delegate: self)
+    }
+    
+    func startRecording() {
+        guard !movieOutput.isRecording else { return }
+        
+        guard let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let videoName = "video_\(Date().timeIntervalSince1970).mov"
+        let videoPath = documentsPath.appendingPathComponent(videoName)
+        
+        movieOutput.startRecording(to: videoPath, recordingDelegate: self)
+        DispatchQueue.main.async {
+            self.isRecording = true
+        }
+    }
+    
+    func stopRecording() {
+        guard movieOutput.isRecording else { return }
+        movieOutput.stopRecording()
     }
 }
 
@@ -83,6 +139,39 @@ extension CameraModel: AVCapturePhotoCaptureDelegate {
         
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         print("Фото успешно сохранено!")
+    }
+}
+
+extension CameraModel: AVCaptureFileOutputRecordingDelegate {
+    func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
+        print("Началась запись видео")
+    }
+    
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+        if let error = error {
+            print("Ошибка при записи видео: \(error)")
+            return
+        }
+        
+        // Сохраняем видео в галерею
+        PHPhotoLibrary.requestAuthorization { status in
+            guard status == .authorized else { return }
+            
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputFileURL)
+            }) { success, error in
+                if success {
+                    print("Видео успешно сохранено в галерею")
+                    try? FileManager.default.removeItem(at: outputFileURL)
+                } else if let error = error {
+                    print("Ошибка сохранения видео: \(error)")
+                }
+            }
+        }
+        
+        DispatchQueue.main.async {
+            self.isRecording = false
+        }
     }
 }
 
