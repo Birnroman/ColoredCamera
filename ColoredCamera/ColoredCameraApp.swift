@@ -11,7 +11,7 @@ import SwiftUI
 struct ColoredCameraApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+          CameraView()
         }
     }
 }
