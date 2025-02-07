@@ -1,68 +1,185 @@
-import SwiftUI
 import AVFoundation
 import Photos
 import PhotosUI
+import SwiftUI
+import RevenueCat
+import RevenueCatUI
 
-struct CameraView: View {
+struct ColorPickerExp: View {
   
+  @State var currentColor: Color = Color(UIColor(cgColor: #colorLiteral(red: 0.831372549, green: 0.2, blue: 0.8588235294, alpha: 1)))
+  @State var isCPPresented: Bool = false
   @StateObject private var cameraModel = CameraModel()
   
+  @State var isVideo: Bool = false
+  @State var isShowingAlert: Bool = false
+  @State var isPaywallPresented: Bool = false
+  
+  @AppStorage("reviewRequestIsPresented") var reviewRequestIsPresented: Bool = false
+  @Environment(\.requestReview) var requestReview
+  @EnvironmentObject var userViewModel: UserViewModel
+
+  
   var body: some View {
-    VStack {
-      CameraPreview(session: cameraModel.session)
-        .frame(width: 300, height: 400)
-        .cornerRadius(20)
-        .overlay(
-          RoundedRectangle(cornerRadius: 20)
-            .stroke(Color.white, lineWidth: 2)
-        )
-        .overlay(
-          Group {
-            if cameraModel.isRecording {
-              RecordingTimer(elapsedTime: cameraModel.recordingTime)
-                .padding(8)
-            }
-          },
-          alignment: .topLeading
-        )
-        .padding()
-      
-      HStack(spacing: 20) {
-        Button(action: {
-          cameraModel.capturePhoto()
-        }) {
-          Text("Сделать фото")
-            .font(.title2)
-            .fontWeight(.bold)
-            .frame(width: 160, height: 50)
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-        }
-        
-        Button(action: {
-          if cameraModel.isRecording {
-            cameraModel.stopRecording()
-          } else {
-            cameraModel.startRecording()
+    ZStack {
+      Color(currentColor).ignoresSafeArea()
+      VStack {
+
+        Spacer()
+
+        CameraPreview(session: cameraModel.session)
+          .frame(width: 180, height: 260)
+          .cornerRadius(20)
+          .overlay(
+            RoundedRectangle(cornerRadius: 20)
+              .stroke(Color.white, lineWidth: 2)
+          )
+          .overlay(
+            Group {
+              if cameraModel.isRecording {
+                RecordingTimer(elapsedTime: cameraModel.recordingTime)
+                  .padding(8)
+              }
+            },
+            alignment: .topLeading
+          )
+          .padding()
+        HStack(spacing: 0) {
+          
+          Button {
+            
+            isVideo = false
+            
+          } label: {
+            Text("Photo").font(.headline)
+              .foregroundStyle(isVideo ? .white : .black)
+              .frame(height: 34)
+              .padding(.horizontal)
+              .background(isVideo ? .clear : .white)
+              .cornerRadius(17)
           }
-        }) {
-          Text(cameraModel.isRecording ? "Остановить" : "Видео")
-            .font(.title2)
-            .fontWeight(.bold)
-            .frame(width: 160, height: 50)
-            .background(cameraModel.isRecording ? Color.red : Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(10)
+          
+          Button {
+            
+            isVideo = true
+            
+          } label: {
+            Text("Video").font(.headline)
+              .foregroundStyle(isVideo ? .black : .white)
+              .frame(height: 34)
+              .padding(.horizontal)
+              .background(isVideo ? .white : .clear)
+              .cornerRadius(17)
+          }
+        }
+        .background(.black.opacity(0.4))
+        .cornerRadius(17)
+        Spacer()
+        HStack(spacing: 80) {
+          Button {
+            if isVideo {
+              if cameraModel.isRecording {
+                cameraModel.stopRecording()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                  isShowingAlert = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                  isShowingAlert = false
+                }
+
+
+              } else {
+                cameraModel.startRecording()
+              }
+            } else {
+              cameraModel.capturePhoto()
+              DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                isShowingAlert = true
+              }
+              DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                isShowingAlert = false
+              }
+              if !reviewRequestIsPresented {
+                requestReview()
+                reviewRequestIsPresented = true
+              }
+            }
+
+          } label: {
+            ZStack(alignment: .center) {
+
+              
+              Circle().foregroundStyle(.black.opacity(0.4)).frame(width: 76)
+                
+              Circle().foregroundStyle(.white).frame(width: 60)
+              
+              if isVideo {
+                if cameraModel.isRecording {
+                  RoundedRectangle(cornerRadius: 8).foregroundStyle(.red).frame(width: 36, height: 36)
+                }
+              }
+
+            }
+          }
+
+        }.frame(maxWidth: .infinity)
+          .overlay {
+            ColorPicker("", selection: $currentColor).offset(x: -45)
+          }
+      }
+      .padding()
+      .onAppear {
+        cameraModel.configure()
+        if !userViewModel.isSubscriptionActive {
+          DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            isPaywallPresented = true
+          }
+
+        }
+
+      }
+      .overlay {
+        if isShowingAlert {
+          VStack {
+            HStack {
+              Spacer()
+              Image(systemName: "xmark").font(.subheadline).foregroundStyle(.white)
+                .onTapGesture {
+                  isShowingAlert = false
+                }
+            }
+            VStack(alignment: .leading, spacing: 10) {
+              Image(systemName: "photo.badge.checkmark.fill")
+                .font(.largeTitle)
+              Text("Saved to the Gallery")
+                .font(.title3)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }              .foregroundStyle(.white)
+
+
+          }
+          .padding(16)
+          .background(.black.opacity(0.9))
+          .cornerRadius(12)
+          .padding(.horizontal, 40)
+          .transition(.opacity)
+          .animation(.easeInOut, value: isShowingAlert)
         }
       }
-    }
-    .onAppear {
-      cameraModel.configure()
+      .fullScreenCover(isPresented: $isPaywallPresented) {
+          PaywallView(isPresented: $isPaywallPresented)
+
+      }
+      
     }
   }
 }
 
+
+
+#Preview {
+  ColorPickerExp()
+}
 struct RecordingTimer: View {
   let elapsedTime: TimeInterval
   

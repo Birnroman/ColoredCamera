@@ -6,12 +6,25 @@
 //
 
 import SwiftUI
+import RevenueCat
 
 @main
 struct ColoredCameraApp: App {
-    var body: some Scene {
-        WindowGroup {
-          CameraView()
-        }
+  
+  @StateObject var userViewModel = UserViewModel()
+
+  
+  init() {
+    Purchases.logLevel = .debug
+    Purchases.configure(withAPIKey: "appl_twjyZgTgzpVATttrLnLmnaXgguu")
+  }
+  
+  var body: some Scene {
+    WindowGroup {
+      ColorPickerExp()
+        .preferredColorScheme(.light)
+        .environmentObject(userViewModel)
+
     }
+  }
 }

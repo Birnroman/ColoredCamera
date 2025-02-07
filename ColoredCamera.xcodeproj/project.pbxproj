@@ -6,13 +6,33 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		86E099792D4F1BF40029D072 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86E099782D4F1BF40029D072 /* StoreKit.framework */; };
+		86E099872D4F23F30029D072 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 86E099862D4F23F30029D072 /* RevenueCat */; };
+		86E099892D4F23F30029D072 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 86E099882D4F23F30029D072 /* RevenueCatUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		862D60972D47D2B100CF84EC /* ColoredCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColoredCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86E099782D4F1BF40029D072 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		86E09A452D53259F0029D072 /* Exceptions for "ColoredCamera" folder in "ColoredCamera" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 862D60962D47D2B100CF84EC /* ColoredCamera */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		862D60992D47D2B100CF84EC /* ColoredCamera */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				86E09A452D53259F0029D072 /* Exceptions for "ColoredCamera" folder in "ColoredCamera" target */,
+			);
 			path = ColoredCamera;
 			sourceTree = "<group>";
 		};
@@ -23,6 +43,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86E099872D4F23F30029D072 /* RevenueCat in Frameworks */,
+				86E099792D4F1BF40029D072 /* StoreKit.framework in Frameworks */,
+				86E099892D4F23F30029D072 /* RevenueCatUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				862D60992D47D2B100CF84EC /* ColoredCamera */,
+				86E099772D4F1BF40029D072 /* Frameworks */,
 				862D60982D47D2B100CF84EC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +67,14 @@
 				862D60972D47D2B100CF84EC /* ColoredCamera.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		86E099772D4F1BF40029D072 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				86E099782D4F1BF40029D072 /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -65,6 +97,8 @@
 			);
 			name = ColoredCamera;
 			packageProductDependencies = (
+				86E099862D4F23F30029D072 /* RevenueCat */,
+				86E099882D4F23F30029D072 /* RevenueCatUI */,
 			);
 			productName = ColoredCamera;
 			productReference = 862D60972D47D2B100CF84EC /* ColoredCamera.app */;
@@ -91,9 +125,18 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
+				fr,
+				es,
+				"pt-PT",
+				de,
+				it,
 			);
 			mainGroup = 862D608E2D47D2B100CF84EC;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				86E099852D4F23F30029D072 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 862D60982D47D2B100CF84EC /* Products */;
 			projectDirPath = "";
@@ -184,6 +227,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -240,6 +284,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -250,26 +295,27 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"ColoredCamera/Preview Content\"";
 				DEVELOPMENT_TEAM = 873Y63NMW3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "We need your accept";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need your accept";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need your accept";
+				INFOPLIST_FILE = ColoredCamera/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Front Flash Color";
+				INFOPLIST_KEY_NSCameraUsageDescription = "You must allow access to the camera to take a picture";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "In order to properly record video, we must get your permission to access the microphone";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "You must allow access to the photo gallery in order to save the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.manruapps.ColoredCamera;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.manruapps.FrontFlashColor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -287,26 +333,27 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"ColoredCamera/Preview Content\"";
 				DEVELOPMENT_TEAM = 873Y63NMW3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "We need your accept";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need your accept";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need your accept";
+				INFOPLIST_FILE = ColoredCamera/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Front Flash Color";
+				INFOPLIST_KEY_NSCameraUsageDescription = "You must allow access to the camera to take a picture";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "In order to properly record video, we must get your permission to access the microphone";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "You must allow access to the photo gallery in order to save the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.manruapps.ColoredCamera;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.manruapps.FrontFlashColor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -340,6 +387,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		86E099852D4F23F30029D072 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		86E099862D4F23F30029D072 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86E099852D4F23F30029D072 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
+		86E099882D4F23F30029D072 /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86E099852D4F23F30029D072 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCatUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 862D608F2D47D2B100CF84EC /* Project object */;
 }
