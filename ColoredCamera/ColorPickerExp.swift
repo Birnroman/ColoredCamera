@@ -170,6 +170,13 @@ struct ColorPickerExp: View {
           PaywallView(isPresented: $isPaywallPresented)
 
       }
+      .onChange(of: userViewModel.isSubscriptionActive) {
+        userViewModel.checkSubscription()
+
+        if userViewModel.isSubscriptionActive {
+          isPaywallPresented = false
+        }
+      }
       
     }
   }
