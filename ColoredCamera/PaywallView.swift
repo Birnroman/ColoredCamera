@@ -58,11 +58,13 @@ struct PaywallView: View {
       
       .padding()
       .originalTemplatePaywallFooter(condensed: false)
-//      .onChange(of: userViewModel.isSubscriptionActive) {
-//        if userViewModel.isSubscriptionActive {
-//          isPresented = false
-//        }
-//      }
+      .onChange(of: userViewModel.isSubscriptionActive) {
+
+        userViewModel.checkSubscription()
+        if userViewModel.isSubscriptionActive {
+          isPresented = false
+        }
+      }
 
     }
   }
