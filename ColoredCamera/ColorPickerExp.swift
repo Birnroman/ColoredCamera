@@ -13,17 +13,15 @@ struct ColorPickerExp: View {
   
   @State var isVideo: Bool = false
   @State var isShowingAlert: Bool = false
-  @State var isPaywallPresented: Bool = false
   
   @AppStorage("reviewRequestIsPresented") var reviewRequestIsPresented: Bool = false
   @Environment(\.requestReview) var requestReview
-  @EnvironmentObject var userViewModel: UserViewModel
   
   
   var body: some View {
     ZStack {
       
-      Color(userViewModel.isSubscriptionActive ? .green : .red)
+      Color(currentColor)
         .ignoresSafeArea()
       VStack {
         
@@ -79,38 +77,34 @@ struct ColorPickerExp: View {
         Spacer()
         HStack(spacing: 80) {
           Button {
-            if userViewModel.isSubscriptionActive {
-              if isVideo {
-                if cameraModel.isRecording {
-                  cameraModel.stopRecording()
-                  DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    isShowingAlert = true
-                  }
-                  DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    isShowingAlert = false
-                  }
-                  
-                  
-                } else {
-                  cameraModel.startRecording()
-                }
-              } else {
-                cameraModel.capturePhoto()
+
+            if isVideo {
+              if cameraModel.isRecording {
+                cameraModel.stopRecording()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                   isShowingAlert = true
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                   isShowingAlert = false
                 }
-                if !reviewRequestIsPresented {
-                  requestReview()
-                  reviewRequestIsPresented = true
-                }
+                
+                
+              } else {
+                cameraModel.startRecording()
               }
             } else {
-              isPaywallPresented = true
+              cameraModel.capturePhoto()
+              DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                isShowingAlert = true
+              }
+              DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                isShowingAlert = false
+              }
+              if !reviewRequestIsPresented {
+                requestReview()
+                reviewRequestIsPresented = true
+              }
             }
-
             
           } label: {
             ZStack(alignment: .center) {
@@ -137,12 +131,7 @@ struct ColorPickerExp: View {
       .padding()
       .onAppear {
         cameraModel.configure()
-        if !userViewModel.isSubscriptionActive {
-          DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            //            isPaywallPresented = true
-          }
-          
-        }
+
         
       }
       .overlay {
@@ -173,17 +162,7 @@ struct ColorPickerExp: View {
           .animation(.easeInOut, value: isShowingAlert)
         }
       }
-      .fullScreenCover(isPresented: $isPaywallPresented) {
-        PaywallView(isPresented: $isPaywallPresented)
-        
-      }
-      .onChange(of: userViewModel.isSubscriptionActive) {
-        userViewModel.checkSubscription()
-        
-        if userViewModel.isSubscriptionActive {
-          isPaywallPresented = false
-        }
-      }
+
       
     }
   }
