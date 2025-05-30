@@ -24,6 +24,7 @@ struct ColoredCameraApp: App {
       ColorPickerExp()
         .preferredColorScheme(.light)
         .environmentObject(userViewModel)
+      
 
     }
   }

@@ -203,6 +203,7 @@ class CameraModel: NSObject, ObservableObject {
   private let queue = DispatchQueue(label: "CameraQueue")
   private var timer: Timer?
   
+  // настраивает камеру и микрофон
   func configure() {
     queue.async {
       self.session.beginConfiguration()
@@ -241,11 +242,13 @@ class CameraModel: NSObject, ObservableObject {
     }
   }
   
+  // делает фото
   func capturePhoto() {
     let settings = AVCapturePhotoSettings()
     self.photoOutput.capturePhoto(with: settings, delegate: self)
   }
   
+  // начать запись видео
   func startRecording() {
     guard !movieOutput.isRecording else { return }
     
@@ -266,6 +269,7 @@ class CameraModel: NSObject, ObservableObject {
     }
   }
   
+  // Завершить запись видео
   func stopRecording() {
     guard movieOutput.isRecording else { return }
     movieOutput.stopRecording()
@@ -275,6 +279,7 @@ class CameraModel: NSObject, ObservableObject {
     timer = nil
   }
 }
+
 
 extension CameraModel: AVCapturePhotoCaptureDelegate {
   func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
