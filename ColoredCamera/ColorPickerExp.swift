@@ -15,6 +15,9 @@ struct ColorPickerExp: View {
   @State var isShowingAlert: Bool = false
   
   @AppStorage("reviewRequestIsPresented") var reviewRequestIsPresented: Bool = false
+  
+  @AppStorage("isNewUser") var isNewUser: Bool = true
+  
   @Environment(\.requestReview) var requestReview
   
   
@@ -130,8 +133,10 @@ struct ColorPickerExp: View {
       }
       .padding()
       .onAppear {
+        if isNewUser {
+          isNewUser = false
+        }
         cameraModel.configure()
-
         
       }
       .overlay {
@@ -203,7 +208,78 @@ class CameraModel: NSObject, ObservableObject {
   private let queue = DispatchQueue(label: "CameraQueue")
   private var timer: Timer?
   
-  // настраивает камеру и микрофон
+  // Публичный доступ для проверки состояния
+  var movieFileOutput: AVCaptureMovieFileOutput {
+    return movieOutput
+  }
+  
+  override init() {
+    super.init()
+    setupNotifications()
+  }
+  
+  deinit {
+    NotificationCenter.default.removeObserver(self)
+  }
+  
+  // MARK: - Notification Setup
+  private func setupNotifications() {
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(appWillResignActive),
+      name: UIApplication.willResignActiveNotification,
+      object: nil
+    )
+    
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(appDidBecomeActive),
+      name: UIApplication.didBecomeActiveNotification,
+      object: nil
+    )
+    
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(appDidEnterBackground),
+      name: UIApplication.didEnterBackgroundNotification,
+      object: nil
+    )
+  }
+  
+  // MARK: - App State Handlers
+  @objc private func appWillResignActive() {
+    // Останавливаем запись при переходе в неактивное состояние
+    if isRecording {
+      stopRecording()
+    }
+  }
+  
+  @objc private func appDidEnterBackground() {
+    // Останавливаем сессию в фоне для экономии ресурсов
+    queue.async {
+      if self.session.isRunning {
+        self.session.stopRunning()
+      }
+    }
+  }
+  
+  @objc private func appDidBecomeActive() {
+    // Перезапускаем сессию при возвращении
+    queue.async {
+      if !self.session.isRunning {
+        self.session.startRunning()
+      }
+    }
+    
+    // Сбрасываем состояние записи на всякий случай
+    DispatchQueue.main.async {
+      if self.isRecording && !self.movieOutput.isRecording {
+        self.resetRecordingState()
+      }
+    }
+  }
+  
+  // MARK: - Camera Configuration
   func configure() {
     queue.async {
       self.session.beginConfiguration()
@@ -242,13 +318,13 @@ class CameraModel: NSObject, ObservableObject {
     }
   }
   
-  // делает фото
+  // MARK: - Photo Capture
   func capturePhoto() {
     let settings = AVCapturePhotoSettings()
     self.photoOutput.capturePhoto(with: settings, delegate: self)
   }
   
-  // начать запись видео
+  // MARK: - Video Recording
   func startRecording() {
     guard !movieOutput.isRecording else { return }
     
@@ -261,25 +337,47 @@ class CameraModel: NSObject, ObservableObject {
     DispatchQueue.main.async {
       self.isRecording = true
       self.recordingTime = 0
+      self.startTimer()
+    }
+  }
+  
+  func stopRecording() {
+    guard movieOutput.isRecording else {
+      // Если запись уже не идет, просто сбрасываем состояние
+      resetRecordingState()
+      return
+    }
+    
+    movieOutput.stopRecording()
+  }
+  
+  // MARK: - Timer Management
+  private func startTimer() {
+    timer?.invalidate() // Убеждаемся, что предыдущий таймер остановлен
+    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+      guard let self = self else { return }
       
-      // Запускаем таймер
-      self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-        self?.recordingTime += 1
+      // Проверяем, что запись действительно идет
+      if self.movieOutput.isRecording {
+        self.recordingTime += 1
+      } else {
+        // Если запись остановлена внешним образом, сбрасываем состояние
+        self.resetRecordingState()
       }
     }
   }
   
-  // Завершить запись видео
-  func stopRecording() {
-    guard movieOutput.isRecording else { return }
-    movieOutput.stopRecording()
-    
-    // Останавливаем таймер
+  private func stopTimer() {
     timer?.invalidate()
     timer = nil
   }
+  
+  private func resetRecordingState() {
+    stopTimer()
+    isRecording = false
+    recordingTime = 0
+  }
 }
-
 
 extension CameraModel: AVCapturePhotoCaptureDelegate {
   func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
