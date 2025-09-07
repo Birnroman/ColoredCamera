@@ -19,9 +19,11 @@ struct ColorPickerExp: View {
   @AppStorage("isNewUser") var isNewUser: Bool = true
   
   @Environment(\.requestReview) var requestReview
-  
+  @State var showPaywall: Bool = false
+  @EnvironmentObject var userVM: UserViewModel
   
   var body: some View {
+    
     ZStack {
       
       Color(currentColor)
@@ -133,9 +135,6 @@ struct ColorPickerExp: View {
       }
       .padding()
       .onAppear {
-        if isNewUser {
-          isNewUser = false
-        }
         cameraModel.configure()
         
       }
@@ -167,7 +166,9 @@ struct ColorPickerExp: View {
           .animation(.easeInOut, value: isShowingAlert)
         }
       }
-
+      .fullScreenCover(isPresented: $showPaywall) {
+        PaywallView(isPresented: $showPaywall)
+      }
       
     }
   }
