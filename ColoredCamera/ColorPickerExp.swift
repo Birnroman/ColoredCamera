@@ -23,154 +23,172 @@ struct ColorPickerExp: View {
   @EnvironmentObject var userVM: UserViewModel
   
   var body: some View {
-    
-    ZStack {
-      
-      Color(currentColor)
-        .ignoresSafeArea()
-      VStack {
+      ZStack {
         
-        Spacer()
-        
-        CameraPreview(session: cameraModel.session)
-          .frame(width: 180, height: 260)
-          .cornerRadius(20)
-          .overlay(
-            RoundedRectangle(cornerRadius: 20)
-              .stroke(Color.white, lineWidth: 2)
-          )
-          .overlay(
-            Group {
-              if cameraModel.isRecording {
-                RecordingTimer(elapsedTime: cameraModel.recordingTime)
-                  .padding(8)
-              }
-            },
-            alignment: .topLeading
-          )
-          .padding()
-        HStack(spacing: 0) {
+        Color(currentColor)
+          .ignoresSafeArea()
+        VStack {
           
-          Button {
-            
-            isVideo = false
-            
-          } label: {
-            Text("Photo").font(.headline)
-              .foregroundStyle(isVideo ? .white : .black)
-              .frame(height: 34)
-              .padding(.horizontal)
-              .background(isVideo ? .clear : .white)
-              .cornerRadius(17)
-          }
+          Spacer()
           
-          Button {
+          CameraPreview(session: cameraModel.session)
+            .frame(width: 180, height: 260)
+            .cornerRadius(20)
+            .overlay(
+              RoundedRectangle(cornerRadius: 20)
+                .stroke(Color.white, lineWidth: 2)
+            )
+            .overlay(
+              Group {
+                if cameraModel.isRecording {
+                  RecordingTimer(elapsedTime: cameraModel.recordingTime)
+                    .padding(8)
+                }
+              },
+              alignment: .topLeading
+            )
+            .padding()
+          HStack(spacing: 0) {
             
-            isVideo = true
+            Button {
+              
+              isVideo = false
+              
+            } label: {
+              Text("Photo").font(.headline)
+                .foregroundStyle(isVideo ? .white : .black)
+                .frame(height: 34)
+                .padding(.horizontal)
+                .background(isVideo ? .clear : .white)
+                .cornerRadius(17)
+            }
             
-          } label: {
-            Text("Video").font(.headline)
-              .foregroundStyle(isVideo ? .black : .white)
-              .frame(height: 34)
-              .padding(.horizontal)
-              .background(isVideo ? .white : .clear)
-              .cornerRadius(17)
+            Button {
+              
+              isVideo = true
+              
+            } label: {
+              Text("Video").font(.headline)
+                .foregroundStyle(isVideo ? .black : .white)
+                .frame(height: 34)
+                .padding(.horizontal)
+                .background(isVideo ? .white : .clear)
+                .cornerRadius(17)
+            }
           }
-        }
-        .background(.black.opacity(0.4))
-        .cornerRadius(17)
-        Spacer()
-        HStack(spacing: 80) {
-          Button {
+          .background(.black.opacity(0.4))
+          .cornerRadius(17)
+          Spacer()
+          HStack(spacing: 80) {
+            Button {
 
-            if isVideo {
-              if cameraModel.isRecording {
-                cameraModel.stopRecording()
+              if isVideo {
+                if cameraModel.isRecording {
+                  cameraModel.stopRecording()
+                  DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    isShowingAlert = true
+                  }
+                  DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    isShowingAlert = false
+                  }
+                  
+                  
+                } else {
+                  cameraModel.startRecording()
+                }
+              } else {
+                cameraModel.capturePhoto()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                   isShowingAlert = true
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                   isShowingAlert = false
                 }
-                
-                
-              } else {
-                cameraModel.startRecording()
-              }
-            } else {
-              cameraModel.capturePhoto()
-              DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                isShowingAlert = true
-              }
-              DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                isShowingAlert = false
-              }
-              if !reviewRequestIsPresented {
-                requestReview()
-                reviewRequestIsPresented = true
-              }
-            }
-            
-          } label: {
-            ZStack(alignment: .center) {
-              
-              
-              Circle().foregroundStyle(.black.opacity(0.4)).frame(width: 76)
-              
-              Circle().foregroundStyle(.white).frame(width: 60)
-              
-              if isVideo {
-                if cameraModel.isRecording {
-                  RoundedRectangle(cornerRadius: 8).foregroundStyle(.red).frame(width: 36, height: 36)
+                if !reviewRequestIsPresented {
+                  requestReview()
+                  reviewRequestIsPresented = true
                 }
               }
               
+            } label: {
+              ZStack(alignment: .center) {
+                
+                
+                Circle().foregroundStyle(.black.opacity(0.4)).frame(width: 76)
+                
+                Circle().foregroundStyle(.white).frame(width: 60)
+                
+                if isVideo {
+                  if cameraModel.isRecording {
+                    RoundedRectangle(cornerRadius: 8).foregroundStyle(.red).frame(width: 36, height: 36)
+                  }
+                }
+                
+              }
+            }
+            
+          }.frame(maxWidth: .infinity)
+            .overlay {
+              ColorPicker("", selection: $currentColor).offset(x: -45)
+            }
+        }
+        .padding()
+        .onAppear {
+          cameraModel.configure()
+//          if isNewUser && !userVM.isSubscriptionActive {
+//            showPaywall = true
+//          } else {
+//            showPaywall = false
+//          }
+        }
+        .onReceive(userVM.$isSubscriptionActive) { isActive in
+          if isNewUser && !isActive {
+            showPaywall = true
+          } else {
+            showPaywall = false
+            if isActive {
+              isNewUser = false // Обновляем флаг при активной подписке
             }
           }
-          
-        }.frame(maxWidth: .infinity)
-          .overlay {
-            ColorPicker("", selection: $currentColor).offset(x: -45)
+        }
+
+        .overlay {
+          if isShowingAlert {
+            VStack {
+              HStack {
+                Spacer()
+                Image(systemName: "xmark").font(.subheadline).foregroundStyle(.white)
+                  .onTapGesture {
+                    isShowingAlert = false
+                  }
+              }
+              VStack(alignment: .leading, spacing: 10) {
+                Image(systemName: "photo.badge.checkmark.fill")
+                  .font(.largeTitle)
+                Text("Saved to the Gallery")
+                  .font(.title3)
+                  .frame(maxWidth: .infinity, alignment: .leading)
+              }              .foregroundStyle(.white)
+              
+              
+            }
+            .padding(16)
+            .background(.black.opacity(0.9))
+            .cornerRadius(12)
+            .padding(.horizontal, 40)
+            .transition(.opacity)
+            .animation(.easeInOut, value: isShowingAlert)
           }
-      }
-      .padding()
-      .onAppear {
-        cameraModel.configure()
+        }
+        .fullScreenCover(isPresented: $showPaywall) {
+          PaywallView(isPresented: $showPaywall)
+            .environmentObject(userVM)
+
+        }
         
       }
-      .overlay {
-        if isShowingAlert {
-          VStack {
-            HStack {
-              Spacer()
-              Image(systemName: "xmark").font(.subheadline).foregroundStyle(.white)
-                .onTapGesture {
-                  isShowingAlert = false
-                }
-            }
-            VStack(alignment: .leading, spacing: 10) {
-              Image(systemName: "photo.badge.checkmark.fill")
-                .font(.largeTitle)
-              Text("Saved to the Gallery")
-                .font(.title3)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }              .foregroundStyle(.white)
-            
-            
-          }
-          .padding(16)
-          .background(.black.opacity(0.9))
-          .cornerRadius(12)
-          .padding(.horizontal, 40)
-          .transition(.opacity)
-          .animation(.easeInOut, value: isShowingAlert)
-        }
-      }
-      .fullScreenCover(isPresented: $showPaywall) {
-        PaywallView(isPresented: $showPaywall)
-      }
-      
-    }
+
+    
   }
 }
 
@@ -200,231 +218,314 @@ struct RecordingTimer: View {
 }
 
 class CameraModel: NSObject, ObservableObject {
-  @Published var session = AVCaptureSession()
-  @Published var isRecording = false
-  @Published var recordingTime: TimeInterval = 0
-  
-  private let photoOutput = AVCapturePhotoOutput()
-  private let movieOutput = AVCaptureMovieFileOutput()
-  private let queue = DispatchQueue(label: "CameraQueue")
-  private var timer: Timer?
-  
-  // Публичный доступ для проверки состояния
-  var movieFileOutput: AVCaptureMovieFileOutput {
-    return movieOutput
-  }
-  
-  override init() {
-    super.init()
-    setupNotifications()
-  }
-  
-  deinit {
-    NotificationCenter.default.removeObserver(self)
-  }
-  
-  // MARK: - Notification Setup
-  private func setupNotifications() {
-    NotificationCenter.default.addObserver(
-      self,
-      selector: #selector(appWillResignActive),
-      name: UIApplication.willResignActiveNotification,
-      object: nil
-    )
+    @Published var session = AVCaptureSession()
+    @Published var isRecording = false
+    @Published var recordingTime: TimeInterval = 0
+    @Published var isSessionReady = false
     
-    NotificationCenter.default.addObserver(
-      self,
-      selector: #selector(appDidBecomeActive),
-      name: UIApplication.didBecomeActiveNotification,
-      object: nil
-    )
+    private var photoOutput = AVCapturePhotoOutput()
+    private var movieOutput = AVCaptureMovieFileOutput()
+    private var videoInput: AVCaptureDeviceInput?
+    private var audioInput: AVCaptureDeviceInput?
+    private var timer: Timer?
     
-    NotificationCenter.default.addObserver(
-      self,
-      selector: #selector(appDidEnterBackground),
-      name: UIApplication.didEnterBackgroundNotification,
-      object: nil
-    )
-  }
-  
-  // MARK: - App State Handlers
-  @objc private func appWillResignActive() {
-    // Останавливаем запись при переходе в неактивное состояние
-    if isRecording {
-      stopRecording()
-    }
-  }
-  
-  @objc private func appDidEnterBackground() {
-    // Останавливаем сессию в фоне для экономии ресурсов
-    queue.async {
-      if self.session.isRunning {
-        self.session.stopRunning()
-      }
-    }
-  }
-  
-  @objc private func appDidBecomeActive() {
-    // Перезапускаем сессию при возвращении
-    queue.async {
-      if !self.session.isRunning {
-        self.session.startRunning()
-      }
+    override init() {
+        super.init()
+        setupNotifications()
     }
     
-    // Сбрасываем состояние записи на всякий случай
-    DispatchQueue.main.async {
-      if self.isRecording && !self.movieOutput.isRecording {
-        self.resetRecordingState()
-      }
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+        stopTimer()
+        if session.isRunning {
+            session.stopRunning()
+        }
     }
-  }
-  
-  // MARK: - Camera Configuration
-  func configure() {
-    queue.async {
-      self.session.beginConfiguration()
-      
-      guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else { return }
-      guard let audio = AVCaptureDevice.default(for: .audio) else { return }
-      
-      do {
-        let videoInput = try AVCaptureDeviceInput(device: camera)
-        if self.session.canAddInput(videoInput) {
-          self.session.addInput(videoInput)
+    
+    // MARK: - Notifications
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            if self?.isRecording == true {
+                self?.stopRecording()
+            }
         }
         
-        let audioInput = try AVCaptureDeviceInput(device: audio)
-        if self.session.canAddInput(audioInput) {
-          self.session.addInput(audioInput)
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.session.stopRunning()
         }
         
-        if self.session.canAddOutput(self.photoOutput) {
-          self.session.addOutput(self.photoOutput)
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            if self?.isSessionReady == true && !self!.session.isRunning {
+                self?.session.startRunning()
+            }
+        }
+    }
+    
+    // MARK: - Configuration
+    func configure() {
+        checkPermissions { [weak self] in
+            self?.setupSession()
+        }
+    }
+    
+    private func checkPermissions(completion: @escaping () -> Void) {
+        let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        let micStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+        
+        switch cameraStatus {
+        case .authorized:
+            if micStatus == .authorized {
+                completion()
+            } else if micStatus == .notDetermined {
+                AVCaptureDevice.requestAccess(for: .audio) { _ in
+                    DispatchQueue.main.async {
+                        completion()
+                    }
+                }
+            } else {
+                completion() // Продолжаем без микрофона
+            }
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                if granted {
+                    AVCaptureDevice.requestAccess(for: .audio) { _ in
+                        DispatchQueue.main.async {
+                            completion()
+                        }
+                    }
+                }
+            }
+        default:
+            print("Camera access denied")
+        }
+    }
+    
+    private func setupSession() {
+        session.beginConfiguration()
+        
+        // Устанавливаем preset
+        session.sessionPreset = .high
+        
+        // Удаляем существующие входы и выходы
+        session.inputs.forEach { session.removeInput($0) }
+        session.outputs.forEach { session.removeOutput($0) }
+        
+        do {
+            // Настройка камеры
+            guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera,
+                                                     for: .video,
+                                                     position: .front) else {
+                print("No front camera available")
+                session.commitConfiguration()
+                return
+            }
+            
+            videoInput = try AVCaptureDeviceInput(device: camera)
+            guard let videoInput = videoInput,
+                  session.canAddInput(videoInput) else {
+                print("Cannot add video input")
+                session.commitConfiguration()
+                return
+            }
+            session.addInput(videoInput)
+            
+            // Настройка микрофона
+            if let audioDevice = AVCaptureDevice.default(for: .audio) {
+                audioInput = try AVCaptureDeviceInput(device: audioDevice)
+                if let audioInput = audioInput,
+                   session.canAddInput(audioInput) {
+                    session.addInput(audioInput)
+                }
+            }
+            
+            // Настройка photo output
+            if session.canAddOutput(photoOutput) {
+                session.addOutput(photoOutput)
+            }
+            
+            // Настройка movie output
+            if session.canAddOutput(movieOutput) {
+                session.addOutput(movieOutput)
+            }
+            
+        } catch {
+            print("Setup error: \(error)")
+            session.commitConfiguration()
+            return
         }
         
-        if self.session.canAddOutput(self.movieOutput) {
-          self.session.addOutput(self.movieOutput)
+        session.commitConfiguration()
+        
+        DispatchQueue.main.async {
+            self.isSessionReady = true
+            self.session.startRunning()
+        }
+    }
+    
+    // MARK: - Photo Capture
+    func capturePhoto() {
+        guard isSessionReady && session.isRunning else {
+            print("Session not ready")
+            return
         }
         
-      } catch {
-        print("Ошибка настройки камеры: \(error)")
-      }
-      
-      self.session.commitConfiguration()
-      
-      DispatchQueue.main.async {
-        self.session.startRunning()
-      }
-    }
-  }
-  
-  // MARK: - Photo Capture
-  func capturePhoto() {
-    let settings = AVCapturePhotoSettings()
-    self.photoOutput.capturePhoto(with: settings, delegate: self)
-  }
-  
-  // MARK: - Video Recording
-  func startRecording() {
-    guard !movieOutput.isRecording else { return }
-    
-    guard let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-    let videoName = "video_\(Date().timeIntervalSince1970).mov"
-    let videoPath = documentsPath.appendingPathComponent(videoName)
-    
-    movieOutput.startRecording(to: videoPath, recordingDelegate: self)
-    
-    DispatchQueue.main.async {
-      self.isRecording = true
-      self.recordingTime = 0
-      self.startTimer()
-    }
-  }
-  
-  func stopRecording() {
-    guard movieOutput.isRecording else {
-      // Если запись уже не идет, просто сбрасываем состояние
-      resetRecordingState()
-      return
+        // Проверяем соединение
+        guard let connection = photoOutput.connection(with: .video),
+              connection.isEnabled && connection.isActive else {
+            print("No active video connection")
+            return
+        }
+        
+        let settings = AVCapturePhotoSettings()
+        settings.isHighResolutionPhotoEnabled = false
+        
+        photoOutput.capturePhoto(with: settings, delegate: self)
     }
     
-    movieOutput.stopRecording()
-  }
-  
-  // MARK: - Timer Management
-  private func startTimer() {
-    timer?.invalidate() // Убеждаемся, что предыдущий таймер остановлен
-    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-      guard let self = self else { return }
-      
-      // Проверяем, что запись действительно идет
-      if self.movieOutput.isRecording {
-        self.recordingTime += 1
-      } else {
-        // Если запись остановлена внешним образом, сбрасываем состояние
-        self.resetRecordingState()
-      }
+    // MARK: - Video Recording
+    func startRecording() {
+        guard isSessionReady && session.isRunning && !movieOutput.isRecording else {
+            print("Cannot start recording")
+            return
+        }
+        
+        // Проверяем соединение
+        guard let connection = movieOutput.connection(with: .video),
+              connection.isEnabled && connection.isActive else {
+            print("No active video connection for recording")
+            return
+        }
+        
+        let tempDir = NSTemporaryDirectory()
+        let fileName = "video_\(Date().timeIntervalSince1970).mov"
+        let filePath = tempDir + fileName
+        let fileURL = URL(fileURLWithPath: filePath)
+        
+        movieOutput.startRecording(to: fileURL, recordingDelegate: self)
+        
+        DispatchQueue.main.async {
+            self.isRecording = true
+            self.recordingTime = 0
+            self.startTimer()
+        }
     }
-  }
-  
-  private func stopTimer() {
-    timer?.invalidate()
-    timer = nil
-  }
-  
-  private func resetRecordingState() {
-    stopTimer()
-    isRecording = false
-    recordingTime = 0
-  }
+    
+    func stopRecording() {
+        guard movieOutput.isRecording else {
+            resetRecordingState()
+            return
+        }
+        movieOutput.stopRecording()
+    }
+    
+    // MARK: - Timer
+    private func startTimer() {
+        stopTimer()
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            if self.movieOutput.isRecording {
+                self.recordingTime += 1
+            } else {
+                self.resetRecordingState()
+            }
+        }
+    }
+    
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    private func resetRecordingState() {
+        DispatchQueue.main.async {
+            self.stopTimer()
+            self.isRecording = false
+            self.recordingTime = 0
+        }
+    }
 }
 
+// MARK: - Photo Delegate
 extension CameraModel: AVCapturePhotoCaptureDelegate {
-  func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-    if let error = error {
-      print("Ошибка при фотографировании: \(error)")
-      return
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        if let error = error {
+            print("Photo capture error: \(error)")
+            return
+        }
+        
+        guard let imageData = photo.fileDataRepresentation(),
+              let image = UIImage(data: imageData) else {
+            print("Cannot convert photo to image")
+            return
+        }
+        
+        savePhotoToLibrary(image: image)
     }
-    guard let data = photo.fileDataRepresentation(),
-          let image = UIImage(data: data) else { return }
     
-    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-    print("Фото успешно сохранено!")
-  }
+    private func savePhotoToLibrary(image: UIImage) {
+        PHPhotoLibrary.requestAuthorization { status in
+            if status == .authorized {
+                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                print("Photo saved successfully")
+            } else {
+                print("Photo library access denied")
+            }
+        }
+    }
 }
 
+// MARK: - Video Delegate
 extension CameraModel: AVCaptureFileOutputRecordingDelegate {
-  func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
-    print("Началась запись видео")
-  }
-  
-  func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-    if let error = error {
-      print("Ошибка при записи видео: \(error)")
-      return
+    func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
+        print("Recording started")
     }
     
-    PHPhotoLibrary.requestAuthorization { status in
-      guard status == .authorized else { return }
-      
-      PHPhotoLibrary.shared().performChanges({
-        PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputFileURL)
-      }) { success, error in
-        if success {
-          print("Видео успешно сохранено в галерею")
-          try? FileManager.default.removeItem(at: outputFileURL)
-        } else if let error = error {
-          print("Ошибка сохранения видео: \(error)")
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+        defer {
+            resetRecordingState()
         }
-      }
+        
+        if let error = error {
+            print("Recording error: \(error)")
+            return
+        }
+        
+        saveVideoToLibrary(url: outputFileURL)
     }
     
-    DispatchQueue.main.async {
-      self.isRecording = false
-      self.recordingTime = 0
+    private func saveVideoToLibrary(url: URL) {
+        PHPhotoLibrary.requestAuthorization { status in
+            if status == .authorized {
+                PHPhotoLibrary.shared().performChanges({
+                    PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+                }) { success, error in
+                    if success {
+                        print("Video saved successfully")
+                    } else {
+                        print("Video save error: \(error?.localizedDescription ?? "Unknown")")
+                    }
+                    
+                    // Удаляем временный файл
+                    try? FileManager.default.removeItem(at: url)
+                }
+            } else {
+                print("Photo library access denied")
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
     }
-  }
 }
 
 struct CameraPreview: UIViewRepresentable {

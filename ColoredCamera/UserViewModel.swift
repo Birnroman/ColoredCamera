@@ -10,7 +10,7 @@ class UserViewModel: ObservableObject {
   init() {
     
     checkSubscription()
-    
+    setupUpdatesListener()
   }
   
   deinit {
