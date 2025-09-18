@@ -58,7 +58,7 @@ struct PaywallView: View {
       
       .padding()
       .originalTemplatePaywallFooter(
-        condensed: true,
+        condensed: false,
         purchaseCompleted: { customerInfo in
           isPresented = false
         }
