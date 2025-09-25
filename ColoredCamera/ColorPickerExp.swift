@@ -262,15 +262,18 @@ class CameraModel: NSObject, ObservableObject {
             self?.session.stopRunning()
         }
         
-        NotificationCenter.default.addObserver(
-            forName: UIApplication.didBecomeActiveNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            if self?.isSessionReady == true && !self!.session.isRunning {
-                self?.session.startRunning()
-            }
-        }
+      NotificationCenter.default.addObserver(
+          forName: UIApplication.didBecomeActiveNotification,
+          object: nil,
+          queue: .main
+      ) { [weak self] _ in
+          if self?.isSessionReady == true && !self!.session.isRunning {
+              // ИСПРАВИТЬ: Запускать в фоновом потоке
+              DispatchQueue.global(qos: .userInitiated).async {
+                  self?.session.startRunning()
+              }
+          }
+      }
     }
     
     // MARK: - Configuration
@@ -312,68 +315,72 @@ class CameraModel: NSObject, ObservableObject {
         }
     }
     
-    private func setupSession() {
-        session.beginConfiguration()
-        
-        // Устанавливаем preset
-        session.sessionPreset = .high
-        
-        // Удаляем существующие входы и выходы
-        session.inputs.forEach { session.removeInput($0) }
-        session.outputs.forEach { session.removeOutput($0) }
-        
-        do {
-            // Настройка камеры
-            guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera,
-                                                     for: .video,
-                                                     position: .front) else {
-                print("No front camera available")
-                session.commitConfiguration()
-                return
-            }
-            
-            videoInput = try AVCaptureDeviceInput(device: camera)
-            guard let videoInput = videoInput,
-                  session.canAddInput(videoInput) else {
-                print("Cannot add video input")
-                session.commitConfiguration()
-                return
-            }
-            session.addInput(videoInput)
-            
-            // Настройка микрофона
-            if let audioDevice = AVCaptureDevice.default(for: .audio) {
-                audioInput = try AVCaptureDeviceInput(device: audioDevice)
-                if let audioInput = audioInput,
-                   session.canAddInput(audioInput) {
-                    session.addInput(audioInput)
-                }
-            }
-            
-            // Настройка photo output
-            if session.canAddOutput(photoOutput) {
-                session.addOutput(photoOutput)
-            }
-            
-            // Настройка movie output
-            if session.canAddOutput(movieOutput) {
-                session.addOutput(movieOutput)
-            }
-            
-        } catch {
-            print("Setup error: \(error)")
-            session.commitConfiguration()
-            return
-        }
-        
-        session.commitConfiguration()
-        
-        DispatchQueue.main.async {
-            self.isSessionReady = true
-            self.session.startRunning()
-        }
-    }
-    
+  private func setupSession() {
+      session.beginConfiguration()
+      
+      // Устанавливаем preset
+      session.sessionPreset = .high
+      
+      // Удаляем существующие входы и выходы
+      session.inputs.forEach { session.removeInput($0) }
+      session.outputs.forEach { session.removeOutput($0) }
+      
+      do {
+          // Настройка камеры
+          guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera,
+                                                   for: .video,
+                                                   position: .front) else {
+              print("No front camera available")
+              session.commitConfiguration()
+              return
+          }
+          
+          videoInput = try AVCaptureDeviceInput(device: camera)
+          guard let videoInput = videoInput,
+                session.canAddInput(videoInput) else {
+              print("Cannot add video input")
+              session.commitConfiguration()
+              return
+          }
+          session.addInput(videoInput)
+          
+          // Настройка микрофона
+          if let audioDevice = AVCaptureDevice.default(for: .audio) {
+              audioInput = try AVCaptureDeviceInput(device: audioDevice)
+              if let audioInput = audioInput,
+                 session.canAddInput(audioInput) {
+                  session.addInput(audioInput)
+              }
+          }
+          
+          // Настройка photo output
+          if session.canAddOutput(photoOutput) {
+              session.addOutput(photoOutput)
+          }
+          
+          // Настройка movie output
+          if session.canAddOutput(movieOutput) {
+              session.addOutput(movieOutput)
+          }
+          
+      } catch {
+          print("Setup error: \(error)")
+          session.commitConfiguration()
+          return
+      }
+      
+      session.commitConfiguration()
+      
+      // ИСПРАВЛЕНИЕ: Обновляем состояние в главном потоке
+      DispatchQueue.main.async {
+          self.isSessionReady = true
+      }
+      
+      // ИСПРАВЛЕНИЕ: Запускаем сессию в фоновом потоке
+      DispatchQueue.global(qos: .userInitiated).async {
+          self.session.startRunning()
+      }
+  }
     // MARK: - Photo Capture
     func capturePhoto() {
         guard isSessionReady && session.isRunning else {
