@@ -152,7 +152,7 @@ struct ColorPickerExp: View {
 //        }
         .onReceive(userVM.$isSubscriptionActive) { isActive in
           if isNewUser && !isActive {
-            showPaywall = false
+            showPaywall = true
           } else {
             showPaywall = false
             if isActive {
