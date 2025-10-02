@@ -34,6 +34,7 @@ struct ColorPickerExp: View {
           CameraPreview(session: cameraModel.session)
             .frame(width: 180, height: 260)
             .cornerRadius(20)
+            
             .overlay(
               RoundedRectangle(cornerRadius: 20)
                 .stroke(Color.white, lineWidth: 2)
@@ -47,6 +48,11 @@ struct ColorPickerExp: View {
               },
               alignment: .topLeading
             )
+            .scaleEffect(
+              cameraModel.isScaledDown ? 0.5 : 1.0
+            )
+            .animation(.easeInOut, value: cameraModel.isScaledDown)
+
             .padding()
           HStack(spacing: 0) {
             
@@ -97,6 +103,11 @@ struct ColorPickerExp: View {
                   cameraModel.startRecording()
                 }
               } else {
+                DispatchQueue.global().async {
+                  DispatchQueue.main.async {
+                    cameraModel.isScaledDown = true
+                  }
+                }
                 cameraModel.capturePhoto()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                   isShowingAlert = true
@@ -222,6 +233,7 @@ class CameraModel: NSObject, ObservableObject {
     @Published var isRecording = false
     @Published var recordingTime: TimeInterval = 0
     @Published var isSessionReady = false
+  @Published var isScaledDown = false
     
     private var photoOutput = AVCapturePhotoOutput()
     private var movieOutput = AVCaptureMovieFileOutput()
@@ -387,7 +399,8 @@ class CameraModel: NSObject, ObservableObject {
             print("Session not ready")
             return
         }
-        
+
+
         // Проверяем соединение
         guard let connection = photoOutput.connection(with: .video),
               connection.isEnabled && connection.isActive else {
@@ -399,6 +412,7 @@ class CameraModel: NSObject, ObservableObject {
         settings.isHighResolutionPhotoEnabled = false
         
         photoOutput.capturePhoto(with: settings, delegate: self)
+      isScaledDown = false
     }
     
     // MARK: - Video Recording
@@ -407,6 +421,7 @@ class CameraModel: NSObject, ObservableObject {
             print("Cannot start recording")
             return
         }
+      isScaledDown = true
         
         // Проверяем соединение
         guard let connection = movieOutput.connection(with: .video),
@@ -435,6 +450,8 @@ class CameraModel: NSObject, ObservableObject {
             return
         }
         movieOutput.stopRecording()
+      isScaledDown = false
+
     }
     
     // MARK: - Timer
