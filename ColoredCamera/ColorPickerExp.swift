@@ -84,6 +84,8 @@ struct ColorPickerExp: View {
           }
           .background(.black.opacity(0.4))
           .cornerRadius(17)
+          .opacity(cameraModel.isRecording ? 0 : 1.0)
+
           Spacer()
           HStack(spacing: 80) {
             Button {
@@ -103,11 +105,7 @@ struct ColorPickerExp: View {
                   cameraModel.startRecording()
                 }
               } else {
-                DispatchQueue.global().async {
-                  DispatchQueue.main.async {
-                    cameraModel.isScaledDown = true
-                  }
-                }
+
                 cameraModel.capturePhoto()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                   isShowingAlert = true
@@ -161,6 +159,10 @@ struct ColorPickerExp: View {
               isNewUser = false // Обновляем флаг при активной подписке
             }
           }
+        }
+        .onDisappear {
+          cameraModel.session.stopRunning() // ← ДОБАВЬ ЭТО!
+
         }
 
         .overlay {
@@ -407,12 +409,16 @@ class CameraModel: NSObject, ObservableObject {
             print("No active video connection")
             return
         }
-        
+      DispatchQueue.main.async {
+          self.isScaledDown = true
+      }
         let settings = AVCapturePhotoSettings()
         settings.isHighResolutionPhotoEnabled = false
         
         photoOutput.capturePhoto(with: settings, delegate: self)
-      isScaledDown = false
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+              self.isScaledDown = false
+          }
     }
     
     // MARK: - Video Recording
