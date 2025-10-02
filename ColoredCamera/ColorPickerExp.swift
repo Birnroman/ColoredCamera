@@ -242,6 +242,8 @@ class CameraModel: NSObject, ObservableObject {
     private var videoInput: AVCaptureDeviceInput?
     private var audioInput: AVCaptureDeviceInput?
     private var timer: Timer?
+  private var originalBrightness: CGFloat = 0
+
     
     override init() {
         super.init()
@@ -412,12 +414,15 @@ class CameraModel: NSObject, ObservableObject {
       DispatchQueue.main.async {
           self.isScaledDown = true
       }
+      setMaxBrightness()
         let settings = AVCapturePhotoSettings()
         settings.isHighResolutionPhotoEnabled = false
         
         photoOutput.capturePhoto(with: settings, delegate: self)
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
               self.isScaledDown = false
+        self.restoreOriginalBrightness() // ← ДОБАВИЛИ
+
           }
     }
     
@@ -428,11 +433,15 @@ class CameraModel: NSObject, ObservableObject {
             return
         }
       isScaledDown = true
+      setMaxBrightness() // ← ДОБАВИЛИ
+
         
         // Проверяем соединение
         guard let connection = movieOutput.connection(with: .video),
               connection.isEnabled && connection.isActive else {
             print("No active video connection for recording")
+          restoreOriginalBrightness() // Восстанавливаем если ошибка
+
             return
         }
         
@@ -456,9 +465,22 @@ class CameraModel: NSObject, ObservableObject {
             return
         }
         movieOutput.stopRecording()
+
       isScaledDown = false
+      restoreOriginalBrightness() // ← ДОБАВИЛИ
 
     }
+  private func setMaxBrightness() {
+          DispatchQueue.main.async {
+              self.originalBrightness = UIScreen.main.brightness
+              UIScreen.main.brightness = 1.0
+          }
+      }
+  private func restoreOriginalBrightness() {
+          DispatchQueue.main.async {
+              UIScreen.main.brightness = self.originalBrightness
+          }
+      }
     
     // MARK: - Timer
     private func startTimer() {
@@ -483,6 +505,8 @@ class CameraModel: NSObject, ObservableObject {
             self.stopTimer()
             self.isRecording = false
             self.recordingTime = 0
+          self.restoreOriginalBrightness() // ← ДОБАВИЛИ (на всякий случай)
+
         }
     }
 }
