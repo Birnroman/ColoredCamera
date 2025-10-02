@@ -135,11 +135,11 @@ struct ColorPickerExp: View {
         .padding()
         .onAppear {
           cameraModel.configure()
-//          if isNewUser && !userVM.isSubscriptionActive {
-//            showPaywall = true
-//          } else {
-//            showPaywall = false
-//          }
+          if isNewUser && !userVM.isSubscriptionActive {
+            showPaywall = true
+          } else {
+            showPaywall = false
+          }
         }
         .onReceive(userVM.$isSubscriptionActive) { isActive in
           if isNewUser && !isActive {

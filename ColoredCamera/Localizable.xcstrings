@@ -4,6 +4,12 @@
     "" : {
       "shouldTranslate" : false
     },
+    "%lld" : {
+
+    },
+    "%lld s" : {
+
+    },
     "Ability to shoot both stills and video" : {
       "localizations" : {
         "de" : {
@@ -142,6 +148,9 @@
         }
       }
     },
+    "Off" : {
+
+    },
     "Photo" : {
       "localizations" : {
         "de" : {
@@ -245,6 +254,12 @@
           }
         }
       }
+    },
+    "Timer: off" : {
+
+    },
+    "Try PRO Mode" : {
+
     },
     "Unlimited number of colors for background" : {
       "localizations" : {
