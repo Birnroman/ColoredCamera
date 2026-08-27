@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		86805C653040762F00C093ED /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 86805C643040762F00C093ED /* RevenueCat */; };
+		86805C673040762F00C093ED /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 86805C663040762F00C093ED /* RevenueCatUI */; };
 		86E099792D4F1BF40029D072 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86E099782D4F1BF40029D072 /* StoreKit.framework */; };
-		86E099872D4F23F30029D072 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 86E099862D4F23F30029D072 /* RevenueCat */; };
-		86E099892D4F23F30029D072 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 86E099882D4F23F30029D072 /* RevenueCatUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,9 +43,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				86E099872D4F23F30029D072 /* RevenueCat in Frameworks */,
+				86805C653040762F00C093ED /* RevenueCat in Frameworks */,
 				86E099792D4F1BF40029D072 /* StoreKit.framework in Frameworks */,
-				86E099892D4F23F30029D072 /* RevenueCatUI in Frameworks */,
+				86805C673040762F00C093ED /* RevenueCatUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,8 +97,8 @@
 			);
 			name = ColoredCamera;
 			packageProductDependencies = (
-				86E099862D4F23F30029D072 /* RevenueCat */,
-				86E099882D4F23F30029D072 /* RevenueCatUI */,
+				86805C643040762F00C093ED /* RevenueCat */,
+				86805C663040762F00C093ED /* RevenueCatUI */,
 			);
 			productName = ColoredCamera;
 			productReference = 862D60972D47D2B100CF84EC /* ColoredCamera.app */;
@@ -135,7 +135,7 @@
 			mainGroup = 862D608E2D47D2B100CF84EC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				86E099852D4F23F30029D072 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+				86805C633040762F00C093ED /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 862D60982D47D2B100CF84EC /* Products */;
@@ -389,25 +389,25 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		86E099852D4F23F30029D072 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+		86805C633040762F00C093ED /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
+				minimumVersion = 5.87.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		86E099862D4F23F30029D072 /* RevenueCat */ = {
+		86805C643040762F00C093ED /* RevenueCat */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 86E099852D4F23F30029D072 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			package = 86805C633040762F00C093ED /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
 			productName = RevenueCat;
 		};
-		86E099882D4F23F30029D072 /* RevenueCatUI */ = {
+		86805C663040762F00C093ED /* RevenueCatUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 86E099852D4F23F30029D072 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			package = 86805C633040762F00C093ED /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
 			productName = RevenueCatUI;
 		};
 /* End XCSwiftPackageProductDependency section */
