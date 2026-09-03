@@ -12,6 +12,7 @@ import RevenueCat
 struct ColoredCameraApp: App {
   
   @StateObject var userViewModel = UserViewModel()
+  @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
   
   init() {
@@ -21,7 +22,15 @@ struct ColoredCameraApp: App {
   
   var body: some Scene {
     WindowGroup {
-      ColorPickerExp()
+      Group {
+        if hasCompletedOnboarding {
+          ColorPickerExp()
+        } else {
+          Onboarding {
+            hasCompletedOnboarding = true
+          }
+        }
+      }
         .preferredColorScheme(.light)
         .environmentObject(userViewModel)
       
