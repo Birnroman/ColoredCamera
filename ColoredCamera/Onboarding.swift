@@ -45,17 +45,21 @@ struct Onboarding: View {
           .frame(maxHeight: 340)
 
         Spacer(minLength: 24)
- 
-        Button(action: advance) {
-          Text(currentStep == steps.count - 1 ? "Done" : "Continue")
-            .font(.headline.weight(.bold))
-            .frame(maxWidth: .infinity)
-            .frame(height: 64)
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(.white)
-        .background(Color(hex: 0xEC197F), in: RoundedRectangle(cornerRadius: 17))
-        .accessibilityHint(currentStep == steps.count - 1 ? "Opens the subscription screen" : "Shows the next onboarding step")
+          Button {
+              advance()
+          } label: {
+              Text(currentStep == steps.count - 1 ? "Done" : "Continue")
+                .font(.headline.weight(.bold))
+                .frame(maxWidth: .infinity)
+                .frame(height: 64)
+                .buttonStyle(.plain)
+                .foregroundStyle(.white)
+                .background(Color(hex: 0xEC197F), in: RoundedRectangle(cornerRadius: 17))
+                .accessibilityHint(currentStep == steps.count - 1 ? "Opens the subscription screen" : "Shows the next onboarding step")
+          }
+          
+
+        
       }
       .foregroundStyle(.white)
       .padding(.horizontal, 24)
