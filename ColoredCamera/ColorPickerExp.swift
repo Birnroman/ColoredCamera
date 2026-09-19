@@ -24,6 +24,7 @@ struct ColorPickerExp: View {
     }
     
     @AppStorage("reviewRequestIsPresented") var reviewRequestIsPresented: Bool = false
+    @AppStorage("tapCount") var tapCount: Int = 0
     
     @AppStorage("isNewUser") var isNewUser: Bool = true
     
@@ -123,7 +124,8 @@ struct ColorPickerExp: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                 isShowingAlert = false
                             }
-                            if !reviewRequestIsPresented {
+                            tapCount += 1
+                            if !reviewRequestIsPresented && tapCount > 2 {
                                 requestReview()
                                 reviewRequestIsPresented = true
                             }
