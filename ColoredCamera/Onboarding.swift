@@ -129,7 +129,7 @@ private struct OnboardingArtwork: View {
   }
 }
 
-private extension Color {
+extension Color {
   init(hex: UInt) {
     self.init(
       red: Double((hex >> 16) & 0xFF) / 255,
