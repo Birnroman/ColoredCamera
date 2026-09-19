@@ -388,18 +388,6 @@
         }
       }
     },
-    "Pro" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pro"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "Saved to the Gallery" : {
       "localizations" : {
         "de" : {
