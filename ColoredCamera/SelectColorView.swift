@@ -2,19 +2,23 @@
 import SwiftUI
 
 struct SelectColorView: View {
-    private let colors: [Color] = [
-        Color(hex: 0xFFCE2E),
-        Color(hex: 0x7CCC5A),
-        Color(hex: 0x4E80FF),
-        Color(hex: 0xF257D3),
-        Color(hex: 0xEE3F3F)]
+//    private let colors: [Color] = [
+//        Color(hex: "FFCE2E"),
+//        Color(hex: "7CCC5A"),
+//        Color(hex: "4E80FF"),
+//        Color(hex: "F257D3"),
+//        Color(hex: "EE3F3F")]
+    
+    private let colors: [String] = [
+        "#FFCE2E",
+        "#7CCC5A",
+        "#4E80FF",
+        "#F257D3",
+        "#EE3F3F"]
     
     
-    private let manImagesNames = [
-        "noColor", "yellowColor", "greenColor", "blueColor", "pinkColor", "redColor"
-    ]
-    
-    @Binding var currentColor: Color
+    @Binding var mainColorHex: String
+
     
     var body: some View {
         HStack {
@@ -22,11 +26,11 @@ struct SelectColorView: View {
                 ForEach(colors, id: \.self) { color in
                     Circle()
                         .frame(width: 34)
-                        .foregroundStyle(color)
+                        .foregroundStyle(Color(hex: color))
                         .overlay(content: {
-                            if color == currentColor {
+                            if color == mainColorHex {
                                 Circle()
-                                    .stroke(lineWidth: 2)
+                                    .stroke(lineWidth: 3)
                                     .frame(width: 38)
                                     .background(.clear)
                                     
@@ -41,27 +45,27 @@ struct SelectColorView: View {
             }
             Spacer()
             
-            if currentColor == Color(hex: 0xFFCE2E) {
+            if mainColorHex == "#FFCE2E" {
                 Image("yellowColor")
                     .resizable()
                     .scaledToFit()
                 
-            } else if currentColor == Color(hex: 0x7CCC5A) {
+            } else if mainColorHex == "#7CCC5A" {
                 Image("greenColor")
                     .resizable()
                     .scaledToFit()
 
-            } else if currentColor == Color(hex: 0x4E80FF) {
+            } else if mainColorHex == "#4E80FF" {
                 Image("blueColor")
                     .resizable()
                     .scaledToFit()
 
-            } else if currentColor == Color(hex: 0xF257D3) {
+            } else if mainColorHex == "#F257D3" {
                 Image("pinkColor")
                     .resizable()
                     .scaledToFit()
 
-            } else if currentColor == Color(hex: 0xEE3F3F) {
+            } else if mainColorHex == "#EE3F3F" {
                 Image("redColor")
                     .resizable()
                     .scaledToFit()
@@ -71,8 +75,8 @@ struct SelectColorView: View {
         }
     }
     
-    private func tapColor(color: Color) {
-        self.currentColor = color
+    private func tapColor(color: String) {
+        self.mainColorHex = color
     }
 }
 

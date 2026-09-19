@@ -14,6 +14,15 @@ struct ColorPickerExp: View {
     @State var isVideo: Bool = false
     @State var isShowingAlert: Bool = false
     
+    @AppStorage("mainColorHex") private var mainColorHex: String = "#F257D3"
+    
+    private var colorBinding: Binding<Color> {
+        Binding(
+            get: { Color(hex: mainColorHex) },
+            set: { newColor in mainColorHex = newColor.toHex() }
+        )
+    }
+    
     @AppStorage("reviewRequestIsPresented") var reviewRequestIsPresented: Bool = false
     
     @AppStorage("isNewUser") var isNewUser: Bool = true
@@ -25,7 +34,8 @@ struct ColorPickerExp: View {
     var body: some View {
         ZStack {
             
-            Color(currentColor)
+            //            Color(currentColor)
+            Color(hex: mainColorHex)
                 .ignoresSafeArea()
             VStack {
                 
@@ -138,7 +148,7 @@ struct ColorPickerExp: View {
                     
                 }.frame(maxWidth: .infinity)
                     .overlay {
-                        ColorPicker("", selection: $currentColor).offset(x: -45)
+                        ColorPicker("", selection: colorBinding).offset(x: -45)
                     }
             }
             .padding()

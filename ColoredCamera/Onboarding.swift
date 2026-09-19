@@ -2,7 +2,15 @@ import SwiftUI
 
 struct Onboarding: View {
     @State private var currentStep = 0
-    @State var currentColor: Color = Color(hex: 0xF257D3)
+//    @State var currentColor: Color = Color(hex: 0xF257D3)
+    @AppStorage("mainColorHex") private var mainColorHex: String = "#F257D3"
+    
+    private var colorBinding: Binding<Color> {
+        Binding(
+            get: { Color(hex: mainColorHex) },
+            set: { newColor in mainColorHex = newColor.toHex() }
+        )
+    }
 
     let onFinished: () -> Void
     
@@ -43,7 +51,7 @@ struct Onboarding: View {
                 Spacer(minLength: 20)
                 
                 if currentStep == 2 {
-                    SelectColorView(currentColor: $currentColor)
+                    SelectColorView(mainColorHex: $mainColorHex)
                 } else {
                     OnboardingArtwork(kind: step.artwork)
                         .frame(maxWidth: .infinity)
@@ -146,6 +154,40 @@ extension Color {
             green: Double((hex >> 8) & 0xFF) / 255,
             blue: Double(hex & 0xFF) / 255
         )
+    }
+}
+
+extension Color {
+    // Инициализация из HEX-строки
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let r, g, b: UInt64
+        switch hex.count {
+        case 6:
+            (r, g, b) = (int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (r, g, b) = (255, 255, 255)
+        }
+        self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: 1)
+    }
+
+    // Конвертация Color обратно в HEX
+    func toHex() -> String {
+        guard let components = UIColor(self).cgColor.components, components.count >= 3 else {
+            return "#F257D3"
+        }
+        let r = Float(components[0])
+        let g = Float(components[1])
+        let b = Float(components[2])
+        return String(format: "#%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
+    }
+}
+
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }
 
