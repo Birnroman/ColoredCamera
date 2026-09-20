@@ -16,8 +16,8 @@ struct Onboarding: View {
     
     private let steps: [OnboardingStep] = [
         .init(title: "Bad lighting ruins your selfies? We have a solution!", artwork: .beforeAndAfter),
-        .init(title: "Flash color selection", artwork: .colorPicker),
-        .init(title: "Save photos and videos without limits", artwork: .gallery)
+        .init(title: "Save photos and videos without limits", artwork: .colorPicker),
+        .init(title: "Pick your favorite color", artwork: .gallery)
     ]
     
     
@@ -96,7 +96,7 @@ struct Onboarding: View {
 }
 
 private struct OnboardingStep {
-    let title: String
+    let title: LocalizedStringResource
     let artwork: OnboardingArtwork.Kind
 }
 
@@ -125,14 +125,17 @@ private struct OnboardingArtwork: View {
         case .beforeAndAfter:
             Image("before-after")
                 .resizable()
+                .scaledToFit()
         case .colorPicker:
             Image("picker")
                 .resizable()
-            
+                .scaledToFit()
+
         case .gallery:
             Image("gallery")
                 .resizable()
-            
+                .scaledToFit()
+
         }
     }
     
