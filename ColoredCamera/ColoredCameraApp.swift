@@ -19,13 +19,13 @@ struct ColoredCameraApp: App {
                 UnsopportedDevices()
             } else {
                 Group {
-                    if hasCompletedOnboarding {
+//                    if hasCompletedOnboarding {
                         ColorPickerExp()
-                    } else {
-                        Onboarding {
-                            hasCompletedOnboarding = true
-                        }
-                    }
+//                    } else {
+//                        Onboarding {
+//                            hasCompletedOnboarding = true
+//                        }
+//                    }
                 }
                 .preferredColorScheme(.light)
                 .environmentObject(userViewModel)
