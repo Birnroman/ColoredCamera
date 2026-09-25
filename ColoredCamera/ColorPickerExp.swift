@@ -98,6 +98,8 @@ struct ColorPickerExp: View {
                 .opacity(cameraModel.isRecording ? 0 : 1.0)
                 
                 Spacer()
+                SelectColorView(mainColorHex: $mainColorHex)
+                Spacer()
                 HStack(spacing: 80) {
                     Button {
                         

@@ -21,8 +21,8 @@ struct SelectColorView: View {
 
     
     var body: some View {
-        HStack {
-            VStack(spacing: 28) {
+//        HStack {
+            HStack(spacing: 28) {
                 ForEach(colors, id: \.self) { color in
                     Circle()
                         .frame(width: 34)
@@ -43,37 +43,37 @@ struct SelectColorView: View {
                         }
                 }
             }
-            Spacer()
-            
-            if mainColorHex == "#FFCE2E" {
-                Image("yellowColor")
-                    .resizable()
-                    .scaledToFit()
-                
-            } else if mainColorHex == "#7CCC5A" {
-                Image("greenColor")
-                    .resizable()
-                    .scaledToFit()
-
-            } else if mainColorHex == "#4E80FF" {
-                Image("blueColor")
-                    .resizable()
-                    .scaledToFit()
-
-            } else if mainColorHex == "#F257D3" {
-                Image("pinkColor")
-                    .resizable()
-                    .scaledToFit()
-
-            } else if mainColorHex == "#EE3F3F" {
-                Image("redColor")
-                    .resizable()
-                    .scaledToFit()
-
-
-            }
+//            Spacer()
+//            
+//            if mainColorHex == "#FFCE2E" {
+//                Image("yellowColor")
+//                    .resizable()
+//                    .scaledToFit()
+//                
+//            } else if mainColorHex == "#7CCC5A" {
+//                Image("greenColor")
+//                    .resizable()
+//                    .scaledToFit()
+//
+//            } else if mainColorHex == "#4E80FF" {
+//                Image("blueColor")
+//                    .resizable()
+//                    .scaledToFit()
+//
+//            } else if mainColorHex == "#F257D3" {
+//                Image("pinkColor")
+//                    .resizable()
+//                    .scaledToFit()
+//
+//            } else if mainColorHex == "#EE3F3F" {
+//                Image("redColor")
+//                    .resizable()
+//                    .scaledToFit()
+//
+//
+//            }
         }
-    }
+//    }
     
     private func tapColor(color: String) {
         self.mainColorHex = color
