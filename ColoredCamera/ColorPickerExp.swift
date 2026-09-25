@@ -81,8 +81,11 @@ struct ColorPickerExp: View {
                     }
                     
                     Button {
-                        
-                        isVideo = true
+                        if userVM.isSubscriptionActive {
+                            isVideo = true
+                        } else {
+                            showPaywall = true
+                        }
                         
                     } label: {
                         Text("Video").font(.headline)
@@ -152,7 +155,21 @@ struct ColorPickerExp: View {
                     
                 }.frame(maxWidth: .infinity)
                     .overlay {
-                        ColorPicker("", selection: colorBinding).offset(x: -45)
+                        ZStack {
+                            ColorPicker("", selection: colorBinding)
+                                .offset(x: -45)
+                                .allowsTightening(userVM.isSubscriptionActive)
+                            if !userVM.isSubscriptionActive {
+                                Color.clear
+                                    .contentShape(Rectangle())
+                                    .frame(width: 44, height: 44)
+                                    .offset(x: 125)
+                                    .onTapGesture {
+                                        showPaywall = true
+                                    }
+                            }
+                        }
+                        
                     }
             }
             .padding()
