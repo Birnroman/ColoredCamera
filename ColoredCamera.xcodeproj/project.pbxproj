@@ -305,6 +305,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "You must allow access to the camera to take a picture";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "In order to properly record video, we must get your permission to access the microphone";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "You must allow access to the photo gallery in order to save the photo";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "You must allow access to the photo gallery in order to save the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
@@ -343,6 +344,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "You must allow access to the camera to take a picture";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "In order to properly record video, we must get your permission to access the microphone";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "You must allow access to the photo gallery in order to save the photo";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "You must allow access to the photo gallery in order to save the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;

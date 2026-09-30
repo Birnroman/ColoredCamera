@@ -109,26 +109,12 @@ struct ColorPickerExp: View {
                         if isVideo {
                             if cameraModel.isRecording {
                                 cameraModel.stopRecording()
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    isShowingAlert = true
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                    isShowingAlert = false
-                                }
-                                
-                                
                             } else {
                                 cameraModel.startRecording()
                             }
                         } else {
                             
                             cameraModel.capturePhoto()
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                isShowingAlert = true
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                isShowingAlert = false
-                            }
                             tapCount += 1
                             if !reviewRequestIsPresented && tapCount > 2 {
                                 requestReview()
@@ -197,6 +183,14 @@ struct ColorPickerExp: View {
                 cameraModel.session.stopRunning() // ← ДОБАВЬ ЭТО!
                 
             }
+            .onChange(of: cameraModel.didSaveMedia) { _, didSave in
+                guard didSave else { return }
+                isShowingAlert = true
+                cameraModel.didSaveMedia = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    isShowingAlert = false
+                }
+            }
             
             .overlay {
                 if isShowingAlert {
@@ -232,11 +226,29 @@ struct ColorPickerExp: View {
                 
             }
             
+            .fullScreenCover(item: Binding(
+                get: { cameraModel.capturedMedia },
+                set: { newValue in
+                    if newValue == nil { cameraModel.capturedMedia = nil }
+                }
+            )) { wrapped in
+                ReviewCaptureView(
+                    media: wrapped,
+                    onSave: {
+                        cameraModel.confirmSave()
+                    },
+                    onDiscard: {
+                        cameraModel.discardCapture()
+                    }
+                )
+            }
+            
         }
         
         
     }
 }
+
 
 
 
@@ -264,12 +276,25 @@ struct RecordingTimer: View {
 }
 
 
+
 class CameraModel: NSObject, ObservableObject {
+    enum MediaKind {
+        case photo(UIImage)
+        case video(URL)
+    }
+
+    struct CapturedMedia: Identifiable {
+        let id = UUID()
+        let kind: MediaKind
+    }
+    
     @Published var session = AVCaptureSession()
     @Published var isRecording = false
     @Published var recordingTime: TimeInterval = 0
     @Published var isSessionReady = false
     @Published var isScaledDown = false
+    @Published var capturedMedia: CapturedMedia?
+    @Published var didSaveMedia = false
     
     private var photoOutput = AVCapturePhotoOutput()
     private var movieOutput = AVCaptureMovieFileOutput()
@@ -460,6 +485,26 @@ class CameraModel: NSObject, ObservableObject {
         }
     }
     
+    func confirmSave() {
+        guard let media = capturedMedia else { return }
+        capturedMedia = nil
+
+        switch media.kind {
+        case .photo(let image):
+            savePhotoToLibrary(image: image)
+        case .video(let url):
+            saveVideoToLibrary(url: url)
+        }
+    }
+    
+    func discardCapture() {
+        guard let media = capturedMedia else { return }
+        if case .video(let url) = media.kind {
+            try? FileManager.default.removeItem(at: url)
+        }
+        capturedMedia = nil
+    }
+    
     // MARK: - Video Recording
     func startRecording() {
         guard isSessionReady && session.isRunning && !movieOutput.isRecording else {
@@ -560,16 +605,19 @@ extension CameraModel: AVCapturePhotoCaptureDelegate {
             return
         }
         
-        savePhotoToLibrary(image: image)
+//        savePhotoToLibrary(image: image)
+        DispatchQueue.main.async {
+            self.capturedMedia = CapturedMedia(kind: .photo(image))
+        }
     }
     
     private func savePhotoToLibrary(image: UIImage) {
-        PHPhotoLibrary.requestAuthorization { status in
-            if status == .authorized {
-                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                print("Photo saved successfully")
-            } else {
-                print("Photo library access denied")
+        requestPhotoLibraryAccess { granted in
+            guard granted else { return }
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAsset(from: image)
+            }) { success, error in
+                self.finishSaving(success: success, error: error)
             }
         }
     }
@@ -591,28 +639,40 @@ extension CameraModel: AVCaptureFileOutputRecordingDelegate {
             return
         }
         
-        saveVideoToLibrary(url: outputFileURL)
+        DispatchQueue.main.async {
+            self.capturedMedia = CapturedMedia(kind: .video(outputFileURL))
+        }
     }
     
     private func saveVideoToLibrary(url: URL) {
-        PHPhotoLibrary.requestAuthorization { status in
-            if status == .authorized {
-                PHPhotoLibrary.shared().performChanges({
-                    PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-                }) { success, error in
-                    if success {
-                        print("Video saved successfully")
-                    } else {
-                        print("Video save error: \(error?.localizedDescription ?? "Unknown")")
-                    }
-                    
-                    // Удаляем временный файл
-                    try? FileManager.default.removeItem(at: url)
-                }
-            } else {
-                print("Photo library access denied")
+        requestPhotoLibraryAccess { granted in
+            guard granted else {
+                try? FileManager.default.removeItem(at: url)
+                return
+            }
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+            }) { success, error in
+                self.finishSaving(success: success, error: error)
                 try? FileManager.default.removeItem(at: url)
             }
+        }
+    }
+
+    private func requestPhotoLibraryAccess(completion: @escaping (Bool) -> Void) {
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+            completion(status == .authorized || status == .limited)
+        }
+    }
+
+    private func finishSaving(success: Bool, error: Error?) {
+        if success {
+            print("Media saved successfully")
+        } else {
+            print("Media save error: \(error?.localizedDescription ?? "Unknown")")
+        }
+        DispatchQueue.main.async {
+            self.didSaveMedia = success
         }
     }
 }
