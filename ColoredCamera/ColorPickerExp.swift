@@ -470,6 +470,12 @@ class CameraModel: NSObject, ObservableObject {
             print("No active video connection")
             return
         }
+        
+        if connection.isVideoMirroringSupported {
+            connection.isVideoMirrored = true
+        }
+        
+        
         DispatchQueue.main.async {
             self.isScaledDown = true
         }
@@ -522,6 +528,10 @@ class CameraModel: NSObject, ObservableObject {
             restoreOriginalBrightness() // Восстанавливаем если ошибка
             
             return
+        }
+        
+        if connection.isVideoMirroringSupported {
+            connection.isVideoMirrored = true
         }
         
         let tempDir = NSTemporaryDirectory()
