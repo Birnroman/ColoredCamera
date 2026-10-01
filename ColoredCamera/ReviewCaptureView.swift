@@ -1,4 +1,3 @@
-
 import AVKit
 import SwiftUI
 
@@ -9,7 +8,6 @@ struct ReviewCaptureView: View {
     
     var body: some View {
         ZStack {
-            // 1. Превью с ограничением геометрии и обрезкой лишнего контента
             GeometryReader { proxy in
                 preview
                     .frame(width: proxy.size.width, height: proxy.size.height)
@@ -17,51 +15,52 @@ struct ReviewCaptureView: View {
             }
             .overlay {
                 Rectangle()
-                    .fill(Gradient(colors: [
-                        .black.opacity(0),
-                        .black.opacity(0),
-                        .black.opacity(0),
-                        .black
-                    ]))
+                    .fill(
+                        Gradient(colors: [
+                            .black.opacity(0),
+                            .black.opacity(0),
+                            .black.opacity(0),
+                            .black
+                        ])
+                    )
+                    .allowsHitTesting(false)
             }
-            
-            // 2. Элементы управления
-            VStack {
-                HStack {
-                    Spacer()
-                    Image(systemName: "xmark")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .frame(width: 64, height: 64)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(32)
-                        .onTapGesture {
-                            onDiscard()
-                        }
-                }
-                .padding()
-                .padding(.top, 24)
-                
-                Spacer()
-                
-                Button {
-                    onSave()
-                } label: {
-                    Text("Save to gallery")
-                        .font(.headline.weight(.bold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 64)
-                        .foregroundStyle(.white)
-                        .background(Color(hex: 0xEC197F), in: RoundedRectangle(cornerRadius: 20))
-                }
-                .buttonStyle(.plain) // Важно: buttonStyle лучше ставить на сам Button
-                .padding(.horizontal)
-            }
-            .padding()
         }
+        .overlay(alignment: .topTrailing) {
+            Button(action: onDiscard) {
+                Image(systemName: "xmark")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(width: 64, height: 64)
+                    .background(.ultraThinMaterial, in: Circle())
+            }
+            .buttonStyle(.plain)
+            .padding()
+            .padding(.top, 24)
+        }
+        
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            Button(action: onSave) {
+                Text("Save to gallery")
+                    .font(.headline.weight(.bold))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 64)
+                    .foregroundStyle(.white)
+                    .background(
+                        Color(hex: 0xEC197F),
+                        in: RoundedRectangle(cornerRadius: 20)
+                    )
+            }
+            .padding(.horizontal)
+            .padding(.top, 12)
+            .padding(.bottom, 12)
+            .background(.black)
+        }
+        
         .ignoresSafeArea()
+        .statusBarHidden(true)
     }
-
+    
     @ViewBuilder
     private var preview: some View {
         switch media.kind {
