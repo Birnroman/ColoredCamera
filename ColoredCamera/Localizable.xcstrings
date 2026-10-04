@@ -8,7 +8,20 @@
 
     },
     "%lld s" : {
-
+      "localizations" : {
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld초"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld s"
+          }
+        }
+      }
     },
     "Ability to shoot both stills and video" : {
       "localizations" : {
@@ -40,6 +53,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Possibilità di scattare foto e video"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사진 및 동영상 촬영 가능"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capacidade de tirar fotos e gravar vídeos"
           }
         },
         "pt-PT" : {
@@ -82,6 +107,18 @@
             "value" : "La cattiva illuminazione rovina i tuoi selfie? Abbiamo la soluzione!"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어두운 조명 때문에 셀카를 망치셨나요? 해결 방법이 있습니다!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iluminação ruim estraga suas selfies? Temos a solução!"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -122,6 +159,18 @@
             "value" : "Continua"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속하기"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -160,6 +209,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fatto"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
           }
         },
         "pt-PT" : {
@@ -208,6 +269,18 @@
             "value" : "Ottieni PRO"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PRO 버전 구매하기"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obter PRO"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -254,6 +327,18 @@
             "value" : "Ora puoi fare un selfie ovunque"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이제 어디서나 셀카를 찍을 수 있습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agora você pode tirar selfies em qualquer lugar."
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -286,6 +371,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disattivato"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끔"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desativado"
           }
         },
         "pt-PT" : {
@@ -328,6 +425,18 @@
             "value" : "Passaggio %#lld di 3"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "온보딩 %lld/3단계"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etapa %lld de 3"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -366,6 +475,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apre la schermata di abbonamento"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구독 화면 열기"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre a tela de assinatura"
           }
         },
         "pt-PT" : {
@@ -414,6 +535,18 @@
             "value" : "Foto"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사진"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -452,6 +585,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scegli il tuo colore preferito"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마음에 드는 색상을 선택하세요"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha sua cor favorita"
           }
         },
         "pt-PT" : {
@@ -494,6 +639,18 @@
             "value" : "Salva foto e video senza limiti"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사진 및 동영상 무제한 저장"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salve fotos e vídeos sem limites"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -532,6 +689,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Salva nella galleria"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "갤러리에 저장"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvar na galeria"
           }
         },
         "pt-PT" : {
@@ -580,6 +749,18 @@
             "value" : "Salvato in Foto"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "갤러리에 저장됨"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvo na galeria"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -618,6 +799,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostra il passaggio successivo"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 온보딩 단계 표시"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra a próxima etapa de introdução"
           }
         },
         "pt-PT" : {
@@ -666,6 +859,18 @@
             "value" : "Passaggio %1$lld di \\%2$lld"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / \\%2$lld단계"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etapa %1$lld / \\%2$lld"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -704,6 +909,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Timer: disattivato"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "타이머: 끔"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temporizador: desativado"
           }
         },
         "pt-PT" : {
@@ -746,6 +963,18 @@
             "value" : "Prova la modalità PRO"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PRO 모드 체험하기"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimentar modo PRO"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -761,7 +990,20 @@
       }
     },
     "Unfortunately, we no longer support the iPad version. You can use the iPhone app instead." : {
-
+      "localizations" : {
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아쉽게도 더 이상 iPad 버전을 지원하지 않습니다. 대신 iPhone 앱을 이용해 주세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Infelizmente, não oferecemos mais suporte para iPad. Você pode usar o app para iPhone."
+          }
+        }
+      }
     },
     "Unlimited number of colors for background" : {
       "localizations" : {
@@ -793,6 +1035,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scelta illimitata di colori per il flash"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "배경 색상 무제한 제공"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cores ilimitadas para o fundo"
           }
         },
         "pt-PT" : {
@@ -841,6 +1095,18 @@
             "value" : "Creazione e salvataggio illimitati di selfie"
           }
         },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무제한 촬영 및 갤러리 저장"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturas e salvamentos ilimitados na galeria"
+          }
+        },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
@@ -885,6 +1151,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Video"
+          }
+        },
+        "ko-KR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동영상"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vídeo"
           }
         },
         "pt-PT" : {
