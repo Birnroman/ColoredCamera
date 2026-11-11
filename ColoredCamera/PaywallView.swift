@@ -21,17 +21,17 @@ struct PaywallView: View {
             
             ScrollView {
                 VStack {
-                    HStack {
-                        Spacer()
-                        Button {
-                            isPresented = false
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title2)
-                                .foregroundStyle(.white.opacity(0.8))
-                        }
-                        
-                    }
+//                    HStack {
+//                        Spacer()
+//                        Button {
+//                            isPresented = false
+//                        } label: {
+//                            Image(systemName: "xmark.circle.fill")
+//                                .font(.title2)
+//                                .foregroundStyle(.white.opacity(0.8))
+//                        }
+//                        
+//                    }
                     //          Spacer()
                     Text("Get PRO").font(.headline)
                         .foregroundStyle(Color(UIColor(cgColor: #colorLiteral(red: 0.831372549, green: 0.2, blue: 0.8588235294, alpha: 1))))
